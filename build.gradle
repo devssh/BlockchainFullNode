@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.2.RELEASE")
+        classpath group: 'org.springframework.boot', name: 'spring-boot-gradle-plugin', version: '2.0.1.RELEASE'
     }
 }
 
@@ -38,14 +38,14 @@ targetCompatibility = 1.8
 
 dependencies {
 
-    compile("org.springframework.boot:spring-boot-starter-web") {
-        exclude module: "spring-boot-starter-tomcat"
-    }
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.0.1.RELEASE'
+    compile group: 'org.projectlombok', name: 'lombok', version: '1.16.20'
+    compile 'com.google.code.gson:gson:2.8.2'
     compile("javax.xml.bind:jaxb-api:2.3.0")
-    compile("org.springframework.boot:spring-boot-starter-jetty")
-    // end::jetty[]
-    // tag::actuator[]
-    compile("org.springframework.boot:spring-boot-starter-actuator")
-    // end::actuator[]
-    testCompile("junit:junit")
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-jetty', version: '2.0.1.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '2.0.1.RELEASE'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.59'
+
+
 }
