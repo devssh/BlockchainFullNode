@@ -2,26 +2,24 @@ package app.utils;
 
 import app.model.Keyz;
 
-import javax.xml.bind.DatatypeConverter;
-import java.math.BigInteger;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
+import java.security.SignatureException;
+import java.util.Base64;
 
 import static app.model.Keyz.decodePrivateKeyFromString;
 
 public class SignatureUtils {
-    public static transient final String signatureAlgo = "SHA256withECDSA";
+    public static transient final String signatureAlgo = "SHA1withECDSA";
     public static transient final String ENCODING = "UTF-8";
-    public static transient final int RADIX = 64;
 
     public static String Sign(PrivateKey privateKey, String message) {
         try {
             Signature dsa = Signature.getInstance(signatureAlgo);
             dsa.initSign(privateKey);
-//            dsa.setParameter();
-            dsa.update(message.getBytes(ENCODING));
-            return new BigInteger(1, dsa.sign()).toString(RADIX);
+            dsa.update(Base64.getDecoder().decode(Base64.getEncoder().encodeToString(message.getBytes(ENCODING))));
+            return Base64.getEncoder().encodeToString(dsa.sign());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -40,8 +38,10 @@ public class SignatureUtils {
         try {
             Signature ecdsa = Signature.getInstance(signatureAlgo);
             ecdsa.initVerify(publicKey);
-            ecdsa.update(blockMessage.getBytes(ENCODING));
-            return ecdsa.verify(DatatypeConverter.parseBase64Binary(sign));
+            ecdsa.update(Base64.getDecoder().decode(Base64.getEncoder().encodeToString(blockMessage.getBytes(ENCODING))));
+            return ecdsa.verify(Base64.getDecoder().decode(sign));
+        } catch (SignatureException | IllegalArgumentException e) {
+            return false;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -49,7 +49,11 @@ public class SignatureUtils {
     }
 
     public static boolean Verify(String blockMessage, String pubKey, String sign) {
-        return Verify(blockMessage, Keyz.decodePublicKeyFromString(pubKey), sign);
+        try {
+            return Verify(blockMessage, Keyz.decodePublicKeyFromString(pubKey, true), sign);
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 
 //    public static boolean VerifyWith(String blockMessage, String signedBy, String sign) {

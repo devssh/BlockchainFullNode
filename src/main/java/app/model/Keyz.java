@@ -39,13 +39,20 @@ public class Keyz {
         return Base64.getEncoder().encodeToString(key.getEncoded());
     }
 
-    public static PublicKey decodePublicKeyFromString(String key) {
+    public static PublicKey decodePublicKeyFromString(String key, boolean throwExceptionToCatch) {
         try {
             return KeyFactory.getInstance(ECDSA).generatePublic(new X509EncodedKeySpec(decodeKeyFromString(key)));
         } catch (Exception e) {
+            if (throwExceptionToCatch) {
+                throw new IllegalArgumentException();
+            }
             e.printStackTrace();
         }
         throw new NullPointerException();
+    }
+
+    public static PublicKey decodePublicKeyFromString(String key) {
+        return decodePublicKeyFromString(key, false);
     }
 
     public static PrivateKey decodePrivateKeyFromString(String key) {
@@ -95,6 +102,10 @@ public class Keyz {
             e.printStackTrace();
         }
         throw new NullPointerException();
+    }
+
+    public static Keyz GenerateKey() {
+        return GenerateKey(GenerateSeed());
     }
 
     @Override
