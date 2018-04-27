@@ -49,9 +49,8 @@ public class Keyz {
     }
 
     public static PrivateKey decodePrivateKeyFromString(String key) {
-        KeyFactory fact = null;
         try {
-            fact = KeyFactory.getInstance(ECDSA);
+            KeyFactory fact = KeyFactory.getInstance(ECDSA);
             return fact.generatePrivate(new PKCS8EncodedKeySpec(decodeKeyFromString(key)));
         } catch (Exception e) {
             e.printStackTrace();
@@ -68,43 +67,54 @@ public class Keyz {
         throw new NullPointerException();
     }
 
-    public static Keyz generateKey() {
+    public static String GenerateSeed() {
+        try {
+            SecureRandom random = SecureRandom.getInstance(SHA_1_PRNG);
+            byte[] seed = random.generateSeed(NUM_BYTES);
+            return Base64.getEncoder().encodeToString(seed);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        throw new NullPointerException();
+    }
+
+    public static Keyz GenerateKey(String seedString) {
         try {
             Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
             KeyPairGenerator keyGen1 = KeyPairGenerator.getInstance(ECDSA);
             ECGenParameterSpec ecSpec = new ECGenParameterSpec(SECP_256_K_1);
             SecureRandom random1 = SecureRandom.getInstance(SHA_1_PRNG);
-            byte[] seed = random1.generateSeed(NUM_BYTES);
-            String seedString = Base64.getEncoder().encodeToString(seed);
-            System.out.println(seedString);
-            System.out.println("");
-            System.out.println("");
-            System.out.println(Base64.getEncoder().encodeToString(Base64.getDecoder().decode(seedString)));
-            System.out.println("");
-            random1.setSeed(seed);
+            random1.setSeed(Base64.getDecoder().decode(seedString));
             keyGen1.initialize(ecSpec, random1);
             KeyPair keyPair1 = keyGen1.generateKeyPair();
             PublicKey pub1 = keyPair1.getPublic();
             PrivateKey priv1 = keyPair1.getPrivate();
-            System.out.println(new Keyz("random", pub1, priv1));
-
-
-            KeyPairGenerator keyGen2 = KeyPairGenerator.getInstance(ECDSA);
-            ECGenParameterSpec ecSpec2 = new ECGenParameterSpec(SECP_256_K_1);
-            SecureRandom random2 = SecureRandom.getInstance(SHA_1_PRNG);
-            random2.setSeed(seed);
-            keyGen2.initialize(ecSpec2, random2);
-            KeyPair keyPair2 = keyGen2.generateKeyPair();
-            PublicKey pub2 = keyPair2.getPublic();
-            PrivateKey priv2 = keyPair2.getPrivate();
-            System.out.println(new Keyz("random", pub2, priv2));
-
 
             return new Keyz("random", pub1, priv1);
         } catch (Exception e) {
             e.printStackTrace();
         }
         throw new NullPointerException();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Keyz keyz = (Keyz) o;
+
+        if (!owner.equals(keyz.owner)) return false;
+        if (!publicKey.equals(keyz.publicKey)) return false;
+        return privateKey.equals(keyz.privateKey);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = owner.hashCode();
+        result = 31 * result + publicKey.hashCode();
+        result = 31 * result + privateKey.hashCode();
+        return result;
     }
 
     @Override
