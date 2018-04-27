@@ -33,12 +33,10 @@ public class FileUtil {
         try {
             Scanner scanner = new Scanner(new File(KEYS_FILENAME));
             String line = scanner.nextLine();
-            System.out.println("oy------------------");
 
             CreateKey(line);
             while (true) {
                 line = scanner.nextLine();
-                System.out.println(line);
                 CreateKey(line);
             }
 

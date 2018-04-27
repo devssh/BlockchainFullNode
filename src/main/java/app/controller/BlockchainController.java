@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static app.service.KeyzManager.CreateAndStoreKey;
 import static app.service.KeyzManager.KEYS;
+import static app.service.MailService.SendMailWithConfirmationCode;
 import static app.utils.JsonUtils.ToJSON;
 
 @RestController
@@ -17,7 +18,7 @@ public class BlockchainController {
         return ToJSON(new KeysView(KEYS));
     }
 
-    @GetMapping(value="/createKey/{name}")
+    @GetMapping(value = "/createKey/{name}")
     public String blockExplorers(@PathVariable("name") String name) {
         return CreateAndStoreKey(name);
     }
@@ -25,6 +26,12 @@ public class BlockchainController {
     @GetMapping(value = "/blocks")
     public String blocks() {
         return "";
+    }
+
+    @GetMapping(value = "/verification-mail/{email}")
+    public String sendEmail(@PathVariable("email") String email) {
+        SendMailWithConfirmationCode(email, "Hi","Works");
+        return "{\"mailSent\":true}";
     }
 
 }
