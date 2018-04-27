@@ -1,10 +1,14 @@
 package app.model;
 
+import lombok.AllArgsConstructor;
+
 import java.util.Arrays;
 
+@AllArgsConstructor
 public class Contract {
-    public String name="abc";
-    public String[] names={"hi","hello"};
+    public final String name;
+    public final Address address;
+    public final String[] fields;
 
     @Override
     public boolean equals(Object o) {
@@ -13,15 +17,26 @@ public class Contract {
 
         Contract contract = (Contract) o;
 
-        if (name != null ? !name.equals(contract.name) : contract.name != null) return false;
+        if (!name.equals(contract.name)) return false;
+        if (!address.equals(contract.address)) return false;
         // Probably incorrect - comparing Object[] arrays with Arrays.equals
-        return Arrays.equals(names, contract.names);
+        return Arrays.equals(fields, contract.fields);
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + Arrays.hashCode(names);
+        int result = name.hashCode();
+        result = 31 * result + address.hashCode();
+        result = 31 * result + Arrays.hashCode(fields);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Contract{" +
+                "name='" + name + '\'' +
+                ", address=" + address +
+                ", fields=" + Arrays.toString(fields) +
+                '}';
     }
 }

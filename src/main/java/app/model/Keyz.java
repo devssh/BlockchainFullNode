@@ -14,9 +14,9 @@ public class Keyz {
     public transient PublicKey publicKeyz;
     public transient PrivateKey privateKeyz;
 
-    public String owner;
-    public String publicKey;
-    public String privateKey;
+    public final String owner;
+    public final String publicKey;
+    public final String privateKey;
 
     public Keyz(String owner, String publicKey, String privateKey) {
         this.owner = owner;
@@ -86,6 +86,9 @@ public class Keyz {
     }
 
     public static Keyz GenerateKey(String seedString) {
+        return GenerateKey(seedString, "random");
+    }
+    public static Keyz GenerateKey(String seedString, String name) {
         try {
             Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
             KeyPairGenerator keyGen1 = KeyPairGenerator.getInstance(ECDSA);
@@ -97,7 +100,7 @@ public class Keyz {
             PublicKey pub1 = keyPair1.getPublic();
             PrivateKey priv1 = keyPair1.getPrivate();
 
-            return new Keyz("random", pub1, priv1);
+            return new Keyz(name, pub1, priv1);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -106,6 +109,9 @@ public class Keyz {
 
     public static Keyz GenerateKey() {
         return GenerateKey(GenerateSeed());
+    }
+    public static Keyz GenerateKeyWithName(String name) {
+        return GenerateKey(GenerateSeed(), name);
     }
 
     @Override
