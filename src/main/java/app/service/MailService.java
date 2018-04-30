@@ -4,20 +4,29 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
 import javax.mail.internet.MimeMessage;
+import java.io.File;
 import java.util.Properties;
+import java.util.Scanner;
+
+import static app.service.RegistrationManager.RegistrationCodes;
 
 
 public class MailService {
 
-    public static void SendMailWithConfirmationCode(String to, String subject, String text) {
+    public static void SendMailWithConfirmationCodes(String to) {
+        SendMail(to, "Activate your Account", "Your activation code is " + RegistrationCodes.get(to));
+    }
+
+    public static void SendMail(String to, String subject, String text) {
 
         try {
             JavaMailSenderImpl emailSender = new JavaMailSenderImpl();
             emailSender.setHost("smtp.gmail.com");
             emailSender.setPort(587);
 
-            emailSender.setUsername("deva3sood@gmail.com");
-            emailSender.setPassword("nopass");
+            Scanner scanner = new Scanner(new File("password.dat"));
+            emailSender.setUsername(scanner.nextLine());
+            emailSender.setPassword(scanner.nextLine());
 
             Properties props = emailSender.getJavaMailProperties();
             props.put("mail.transport.protocol", "smtp");

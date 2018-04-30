@@ -11,4 +11,12 @@ public class LoginDetails {
         this.email = other.email;
         this.password = other.password;
     }
+
+    @Override
+    public String toString() {
+        return "LoginDetails{" +
+                "email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                '}';
+    }
 }
