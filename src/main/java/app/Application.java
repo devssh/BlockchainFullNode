@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 
-import static app.service.KeyzManager.KEYS;
-import static app.utils.FileUtil.ReadAllKeys;
+import static app.utils.FileUtil.InitServerLoadData;
 
 
 @SpringBootApplication
@@ -18,7 +17,7 @@ public class Application {
     }
 
     public Application() {
-        ReadAllKeys();
+        InitServerLoadData();
     }
 
     @Bean

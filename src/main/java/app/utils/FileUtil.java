@@ -3,12 +3,17 @@ package app.utils;
 import java.io.*;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.function.BiPredicate;
+import java.util.function.Consumer;
 
 import static app.service.KeyzManager.CreateKey;
 
 public class FileUtil {
-
     public static final String KEYS_FILENAME = "KEYS.dat";
+
+    public static void InitServerLoadData() {
+        ReadAllKeys();
+    }
 
     public static void AppendLine(String block, String fileName) {
         AppendLine(block, fileName, true, true);
@@ -30,6 +35,21 @@ public class FileUtil {
     }
 
     public static void ReadAllKeys() {
+        try {
+            Scanner scanner = new Scanner(new File(KEYS_FILENAME));
+            String line = scanner.nextLine();
+
+            CreateKey(line);
+            while (true) {
+                line = scanner.nextLine();
+                CreateKey(line);
+            }
+
+        } catch (NoSuchElementException | FileNotFoundException ignored) {
+        }
+    }
+
+    public static void ReadAllUsers(BiPredicate<Integer, Integer> i, Consumer<Integer> c) {i.test(1,2);c.accept(1);
         try {
             Scanner scanner = new Scanner(new File(KEYS_FILENAME));
             String line = scanner.nextLine();

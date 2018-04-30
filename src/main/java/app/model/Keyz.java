@@ -76,18 +76,24 @@ public class Keyz {
 
     public static String GenerateSeed() {
         try {
-            SecureRandom random = SecureRandom.getInstance(SHA_1_PRNG);
+            SecureRandom random = new SecureRandom();
             byte[] seed = random.generateSeed(NUM_BYTES);
             return Base64.getEncoder().encodeToString(seed);
-        } catch (NoSuchAlgorithmException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         throw new NullPointerException();
     }
 
+    public static String GenerateSeed(int noOfDigits) {
+        String seedString = GenerateSeed();
+        return seedString.substring(seedString.length() - (3 + noOfDigits), seedString.length() - 3);
+    }
+
     public static Keyz GenerateKey(String seedString) {
         return GenerateKey(seedString, "random");
     }
+
     public static Keyz GenerateKey(String seedString, String name) {
         try {
             Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
@@ -110,6 +116,7 @@ public class Keyz {
     public static Keyz GenerateKey() {
         return GenerateKey(GenerateSeed());
     }
+
     public static Keyz GenerateKeyWithName(String name) {
         return GenerateKey(GenerateSeed(), name);
     }

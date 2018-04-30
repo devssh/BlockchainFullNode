@@ -1,5 +1,6 @@
-package app.model;
+package app.model.view;
 
+import app.model.Keyz;
 import lombok.AllArgsConstructor;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
