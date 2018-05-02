@@ -3,6 +3,7 @@ package app.controller;
 import app.model.dto.CreateContract;
 import app.model.dto.LoginSession;
 import app.model.view.BlockchainView;
+import app.model.view.ContractView;
 import app.model.view.KeysView;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import static app.service.BlockManager.BLOCKCHAIN;
 import static app.service.BlockManager.MineBlock;
+import static app.service.ContractManager.Contracts;
 import static app.service.ContractManager.CreateContractUTXO;
 import static app.service.KeyzManager.CreateAndStoreKey;
 import static app.service.KeyzManager.KEYS;
@@ -49,20 +51,18 @@ public class BlockchainController {
     }
 
     @PostMapping(value = "/contracts")
-    public String contracts() {
+    public String contracts(@RequestBody LoginSession loginSession) {
+        if (isValidSession(loginSession)) {
+            return ToJSON(new ContractView(Contracts));
+        }
         return "";
-    }
-
-    @GetMapping(value="/blockchain")
-    public String blockchain() {
-        return ToJSON(new BlockchainView(BLOCKCHAIN));
     }
 
 
     @PostMapping(value = "/blocks")
     public String blocks(@RequestBody LoginSession loginSession) {
         if (isValidSession(loginSession)) {
-            return "{\"hi\":\"hello\"}";
+            return ToJSON(new BlockchainView(BLOCKCHAIN));
         }
         return "";
     }
