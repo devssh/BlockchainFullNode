@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import static app.model.Keyz.GenerateSeed;
+import static app.service.KeyzManager.CreateAndStoreKey;
 import static app.service.RegistrationManager.RegistrationCodes;
 import static app.service.RegistrationManager.RegistrationPendingUsers;
 import static app.utils.FileUtil.StoreUser;
@@ -24,6 +25,7 @@ public class UserManager {
         RegistrationPendingUsers.remove(fullUserData.email);
         RegistrationCodes.remove(fullUserData.email);
         Users.putIfAbsent(fullUserData.email, fullUserData);
+        CreateAndStoreKey(fullUserData.email);
         return new LoginSession(fullUserData.email, fullUserData.sessionToken);
     }
 
@@ -35,9 +37,18 @@ public class UserManager {
             FullUserData user = new FullUserData(activation.email, loginDetails.password,
                     GenerateSeed(7), LocalDateTime.now().plusDays(1).toString());
             StoreUser(user);
-            //TODO: Delete from the file after creation of User
+            //TODO: Delete from the file after creation of User without restart
             return CreateUser(ToJSON(user));
         }
         throw new NullPointerException();
+    }
+
+    public static boolean isValidSession(LoginSession loginSession) {
+        FullUserData fullUserData = Users.get(loginSession.email);
+        if (fullUserData != null && fullUserData.email.equals(loginSession.email) &&
+                fullUserData.sessionToken.equals(loginSession.sessionToken)) {
+            return true;
+        }
+        return false;
     }
 }

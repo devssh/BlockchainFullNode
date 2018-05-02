@@ -4,12 +4,12 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class BlockDetails {
-    public final String nonce;
-    public final String depth;
-    public final String blockCreatedAt;
+    public Integer nonce;
+    public final Integer depth;
+    public String blockCreatedAt;
     public final String previousBlockSign;
     public final String merkleRoot;
-    public final String difficulty;
+    public final Integer difficulty;
     public final String relayedBy;
-    public final String numberOfTransactions;
+    public final Integer numberOfTransactions;
 }

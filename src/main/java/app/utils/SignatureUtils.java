@@ -1,5 +1,6 @@
 package app.utils;
 
+import app.model.Block;
 import app.model.Keyz;
 
 import java.security.PrivateKey;
@@ -32,6 +33,10 @@ public class SignatureUtils {
 
     public static String Sign(String privKey, String message) {
         return Sign(decodePrivateKeyFromString(privKey), message);
+    }
+
+    public static boolean Verify(Block block) {
+        return Verify(block.data, block.publicKey, block.sign);
     }
 
     public static boolean Verify(String blockMessage, PublicKey publicKey, String sign) {

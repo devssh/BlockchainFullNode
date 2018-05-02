@@ -1,27 +1,32 @@
 package app.controller;
 
-import app.model.dto.Activation;
-import app.model.dto.FullUserData;
-import app.model.dto.LoginDetails;
+import app.model.dto.CreateContract;
 import app.model.dto.LoginSession;
+import app.model.view.BlockchainView;
 import app.model.view.KeysView;
-import app.model.view.RegistrationPendingView;
-import app.model.view.UsersView;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
+import static app.service.BlockManager.BLOCKCHAIN;
+import static app.service.BlockManager.MineBlock;
+import static app.service.ContractManager.CreateContractUTXO;
 import static app.service.KeyzManager.CreateAndStoreKey;
 import static app.service.KeyzManager.KEYS;
-import static app.service.MailService.SendMail;
-import static app.service.MailService.SendMailWithConfirmationCodes;
-import static app.service.RegistrationManager.CreateAndStoreRegistration;
-import static app.service.RegistrationManager.RegistrationPendingUsers;
-import static app.service.UserManager.CreateAndStoreUserIfActivated;
-import static app.service.UserManager.Users;
+import static app.service.UserManager.isValidSession;
 import static app.utils.JsonUtils.ToJSON;
 
-@CrossOrigin(origins = {"http://localhost:3000"}, methods = {RequestMethod.POST, RequestMethod.GET})
+@CrossOrigin(origins = {"http://localhost:3000"}, methods = {RequestMethod.POST, RequestMethod.GET, RequestMethod.OPTIONS})
+@EnableScheduling
 @RestController
 public class BlockchainController {
+
+    @Scheduled(fixedRate = 5000)
+    public void createBlock() {
+        System.out.println("Mining active");
+        MineBlock();
+    }
+
     @GetMapping(value = "/")
     public String home() {
         return "Server is running";
@@ -37,72 +42,30 @@ public class BlockchainController {
         return CreateAndStoreKey(name);
     }
 
-    @GetMapping(value = "/blocks")
-    public String blocks() {
+    @PostMapping(value = "/createContract")
+    public String createContract(@RequestBody CreateContract createContract) {
+        CreateContractUTXO(createContract);
         return "";
     }
 
-    @GetMapping(value = "/verification-mail/{email}")
-    public String sendEmail(@PathVariable("email") String email) {
-        SendMail(email, "Hi", "Works");
-        return "{\"mailSent\":true}";
+    @PostMapping(value = "/contracts")
+    public String contracts() {
+        return "";
     }
 
-    @PostMapping(value = "/register")
-    public String register(@RequestBody LoginDetails loginDetails) {
-        if (RegistrationPendingUsers.containsKey(loginDetails.email)) {
-            return "{\"registration\": \"reattempted\"}";
+    @GetMapping(value="/blockchain")
+    public String blockchain() {
+        return ToJSON(new BlockchainView(BLOCKCHAIN));
+    }
+
+
+    @PostMapping(value = "/blocks")
+    public String blocks(@RequestBody LoginSession loginSession) {
+        if (isValidSession(loginSession)) {
+            return "{\"hi\":\"hello\"}";
         }
-        //TODO: check users as well
-        CreateAndStoreRegistration(loginDetails);
-        SendMailWithConfirmationCodes(loginDetails.email);
-        return "{\"registration\": true}";
+        return "";
     }
 
-    @PostMapping(value = "complete-registration")
-    public String completeRegistration(@RequestBody Activation activation) {
-        try {
-            LoginSession loginSession = CreateAndStoreUserIfActivated(activation);
-            return "{\"sessionToken\": \"" + loginSession.sessionToken + "\"}";
-        } catch (NullPointerException e) {
-            return "{\"registration\": false}";
-        }
-    }
 
-    @PostMapping(value = "login-session")
-    public String login(@RequestBody LoginSession loginSession) {
-        FullUserData user = Users.get(loginSession.email);
-        if (user != null && loginSession.email.equals(user.email) && loginSession.sessionToken.equals(user.sessionToken)) {
-            //TODO: validate sessionToken valid and refresh expiry
-            return "{\"login\": true}";
-        }
-
-        return "{\"login\": false}";
-    }
-
-    @PostMapping(value = "login")
-    public String login(@RequestBody LoginDetails loginDetails) {
-        FullUserData user = Users.get(loginDetails.email);
-        if (user != null && loginDetails.email.equals(user.email) && loginDetails.password.equals(user.password)) {
-            //TODO: refresh expiry if expired
-            return "{\"sessionToken\": \"" + user.sessionToken + "\"}";
-        }
-
-        LoginDetails loginDetailsExpected = RegistrationPendingUsers.get(loginDetails.email);
-        if (loginDetailsExpected != null && loginDetails.email.equals(loginDetailsExpected.email) &&
-                loginDetails.password.equals(loginDetailsExpected.password)) {
-            return "{\"activation\": \"pending\"}";
-        }
-        return "{\"login\": false}";
-    }
-
-    @GetMapping(value = "users")
-    public String usersView() {
-        return ToJSON(new UsersView(Users));
-    }
-
-    @GetMapping(value = "activationPendingUsers")
-    public String registrationView() {
-        return ToJSON(new RegistrationPendingView(RegistrationPendingUsers));
-    }
 }

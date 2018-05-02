@@ -1,15 +1,20 @@
 package app.utils;
 
+import app.model.Block;
+import app.model.Contract;
 import app.model.dto.Activation;
 import app.model.dto.FullUserData;
 import app.model.dto.LoginDetails;
 
 import java.io.*;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import static app.service.BlockManager.CreateAndVerifyTransactions;
+import static app.service.BlockManager.CreateBlockAndVerify;
 import static app.service.KeyzManager.CreateKey;
 import static app.service.RegistrationManager.CreateRegistration;
 import static app.service.UserManager.CreateUser;
@@ -21,11 +26,16 @@ public class FileUtil {
     public static final String USERS_FILENAME = "USERS.dat";
     public static final String REGISTERED_FILENAME = "RPU.dat";
     public static final String CODES_FILENAME = "ACTIVATION.dat";
+    public static final String BLOCKS_FILENAME = "BLOCKS.dat";
+    public static final String TRANSACTIONS_FILENAME = "TRANSACTIONS.dat";
 
     public static void InitServerLoadData() {
         ReadAllKeys();
         ReadAllUsers();
         ReadAllRegistrations();
+        ReadAllBlocks();
+        //Read all blocks must occur before read all transactions as it verifies
+        ReadAllTransactions();
     }
 
     public static void AppendLine(String block, String fileName) {
@@ -121,7 +131,7 @@ public class FileUtil {
         String[] registrationValues = registrations.values().toArray(new String[0]);
 
         for (int i = 0; i < registrationValues.length; i++) {
-            if (i==0) {
+            if (i == 0) {
                 WriteLine(registrationValues[i], REGISTERED_FILENAME, true, false);
             } else {
                 AppendLine(registrationValues[i], REGISTERED_FILENAME);
@@ -132,7 +142,7 @@ public class FileUtil {
         String[] codesValues = codes.values().toArray(new String[0]);
 
         for (int i = 0; i < codesValues.length; i++) {
-            if (i==0) {
+            if (i == 0) {
                 WriteLine(codesValues[i], CODES_FILENAME, true, false);
             } else {
                 AppendLine(codesValues[i], CODES_FILENAME);
@@ -140,6 +150,44 @@ public class FileUtil {
             }
         }
 
+    }
+
+    public static void ReadAllBlocks() {
+        try {
+            Scanner scanner = new Scanner(new File(BLOCKS_FILENAME));
+            String line = scanner.nextLine();
+            CreateBlockAndVerify(line);
+
+            while (true) {
+                line = scanner.nextLine();
+                CreateBlockAndVerify(line);
+            }
+
+        } catch (NoSuchElementException | FileNotFoundException ignored) {
+        }
+    }
+
+    public static void ReadAllTransactions() {
+        try {
+            Scanner scanner = new Scanner(new File(TRANSACTIONS_FILENAME));
+            String line = scanner.nextLine();
+            CreateAndVerifyTransactions(line);
+
+            while (true) {
+                line = scanner.nextLine();
+                CreateAndVerifyTransactions(line);
+            }
+
+        } catch (NoSuchElementException | FileNotFoundException ignored) {
+        }
+    }
+
+    public static void StoreBlockchainBlock(Block block) {
+        AppendLine(ToJSON(block), BLOCKS_FILENAME);
+    }
+
+    public static void StoreTransactionsInBlock(List<Contract> contracts) {
+        AppendLine(ToJSON(contracts.toArray()), TRANSACTIONS_FILENAME);
     }
 
 

@@ -1,0 +1,2 @@
+[{"name":"Coupon","createdAt":"2018-05-03T01:56:41.090595","address":{"blockDepth":0,"transactionDepth":0},"fields":["email","location"]}]
+[{"name":"random","createdAt":"2018-05-03T02:12:54.843167","address":{"blockDepth":1,"transactionDepth":0},"fields":["rand","rand2"]}]
