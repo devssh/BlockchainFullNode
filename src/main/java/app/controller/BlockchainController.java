@@ -18,7 +18,7 @@ import static app.service.KeyzManager.KEYS;
 import static app.service.UserManager.isValidSession;
 import static app.utils.JsonUtils.ToJSON;
 
-@CrossOrigin(origins = {"http://localhost:3000"}, methods = {RequestMethod.POST, RequestMethod.GET, RequestMethod.OPTIONS})
+@CrossOrigin(origins = {"*"}, methods = {RequestMethod.POST, RequestMethod.GET, RequestMethod.OPTIONS, RequestMethod.HEAD, RequestMethod.DELETE, RequestMethod.PATCH, RequestMethod.PUT})
 @EnableScheduling
 @RestController
 public class BlockchainController {

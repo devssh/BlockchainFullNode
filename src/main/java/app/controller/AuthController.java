@@ -16,7 +16,7 @@ import static app.service.UserManager.CreateAndStoreUserIfActivated;
 import static app.service.UserManager.Users;
 import static app.utils.JsonUtils.ToJSON;
 
-@CrossOrigin(origins = {"http://localhost:3000"}, methods = {RequestMethod.POST, RequestMethod.GET, RequestMethod.OPTIONS})
+@CrossOrigin(origins = {"*"}, methods = {RequestMethod.POST, RequestMethod.GET, RequestMethod.OPTIONS, RequestMethod.HEAD, RequestMethod.DELETE, RequestMethod.PATCH, RequestMethod.PUT})
 @RestController
 public class AuthController {
 
