@@ -1,5 +1,6 @@
 package app.service;
 
+import org.springframework.core.io.InputStreamSource;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
@@ -14,10 +15,10 @@ import static app.service.RegistrationManager.RegistrationCodes;
 public class MailService {
 
     public static void SendMailWithConfirmationCodes(String to) {
-        SendMail(to, "Activate your Account", "Your activation code is " + RegistrationCodes.get(to));
+        SendMail(to, "Activate your Account", "Your activation code is " + RegistrationCodes.get(to), null);
     }
 
-    public static void SendMail(String to, String subject, String text) {
+    public static void SendMail(String to, String subject, String text, InputStreamSource inputStreamSource) {
 
         try {
             JavaMailSenderImpl emailSender = new JavaMailSenderImpl();
@@ -39,7 +40,9 @@ public class MailService {
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(text);
-
+            if (inputStreamSource != null) {
+                helper.addAttachment("coupon.pkpass", inputStreamSource);
+            }
             emailSender.send(message);
         } catch (Exception e) {
             e.printStackTrace();

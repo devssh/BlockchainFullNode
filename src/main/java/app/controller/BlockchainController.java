@@ -5,6 +5,7 @@ import app.model.dto.LoginSession;
 import app.model.view.BlockchainView;
 import app.model.view.ContractView;
 import app.model.view.KeysView;
+import org.springframework.core.io.InputStreamSource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,8 @@ import static app.service.ContractManager.Contracts;
 import static app.service.ContractManager.CreateContractUTXO;
 import static app.service.KeyzManager.CreateAndStoreKey;
 import static app.service.KeyzManager.KEYS;
+import static app.service.MailService.SendMail;
+import static app.service.PasskitService.CreatePass;
 import static app.service.UserManager.isValidSession;
 import static app.utils.JsonUtils.ToJSON;
 
@@ -65,6 +68,13 @@ public class BlockchainController {
             return ToJSON(new BlockchainView(BLOCKCHAIN));
         }
         return "";
+    }
+
+    @GetMapping(value="testMail")
+    public String testMail() {
+        InputStreamSource hello = CreatePass("hello");
+        SendMail("devasood@gmail.com","test", "hi", hello);
+        return "Success";
     }
 
 

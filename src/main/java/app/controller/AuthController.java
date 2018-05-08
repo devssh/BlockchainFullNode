@@ -20,12 +20,6 @@ import static app.utils.JsonUtils.ToJSON;
 @RestController
 public class AuthController {
 
-    @GetMapping(value = "/verification-mail/{email}")
-    public String sendEmail(@PathVariable("email") String email) {
-        SendMail(email, "Hi", "Works");
-        return "{\"mailSent\":true}";
-    }
-
     @PostMapping(value = "/register")
     public String register(@RequestBody LoginDetails loginDetails) {
         if (RegistrationPendingUsers.containsKey(loginDetails.email)) {
