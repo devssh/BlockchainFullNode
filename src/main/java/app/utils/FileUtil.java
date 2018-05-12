@@ -15,6 +15,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import static app.service.BlockManager.CreateAndVerifyTransactions;
 import static app.service.BlockManager.CreateBlockAndVerify;
+import static app.service.KeyzManager.CreateAndStoreKey;
 import static app.service.KeyzManager.CreateKey;
 import static app.service.RegistrationManager.CreateRegistration;
 import static app.service.UserManager.CreateUser;
@@ -36,6 +37,7 @@ public class FileUtil {
         ReadAllBlocks();
         //Read all blocks must occur before read all transactions as it verifies
         ReadAllTransactions();
+        CreateAndStoreKey("Miner");
     }
 
     public static void AppendLine(String block, String fileName) {

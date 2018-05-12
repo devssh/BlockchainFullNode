@@ -9,4 +9,6 @@ public class Address {
     public final Integer blockDepth;
     public final Integer transactionDepth;
 
+
+
 }
