@@ -3,8 +3,10 @@ package app.service;
 import app.model.Block;
 import app.model.BlockDetails;
 import app.model.Contract;
+import app.model.Transaction;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,46 +16,68 @@ import static app.model.Block.BlockSign;
 import static app.service.ContractManager.ContractUTXOs;
 import static app.service.ContractManager.Contracts;
 import static app.service.ContractManager.CreateContracts;
+import static app.service.TransactionManager.CreateTransactions;
+import static app.service.TransactionManager.TransactionUTXOs;
+import static app.service.TransactionManager.Transactions;
 import static app.utils.DateUtil.GetDateTimeNow;
-import static app.utils.FileUtil.StoreBlockchainBlock;
-import static app.utils.FileUtil.StoreTransactionsInBlock;
+import static app.utils.FileUtil.*;
 import static app.utils.JsonUtils.FromJSON;
 import static app.utils.JsonUtils.ToJSON;
 import static app.utils.SignatureUtils.Verify;
 
 public class BlockManager {
     public static final ConcurrentMap<Integer, Block> BLOCKCHAIN = new ConcurrentHashMap<>();
-    public static final ConcurrentMap<Integer, String> BLOCKCHAIN_TRANSACTIONS = new ConcurrentHashMap<>();
+    public static final ConcurrentMap<Integer, Contract[]> BLOCKCHAIN_CONTRACTS = new ConcurrentHashMap<>();
+    public static final ConcurrentMap<Integer, Transaction[]> BLOCKCHAIN_TRANSACTIONS = new ConcurrentHashMap<>();
 
     public static void MineBlock() {
         //Extract to mine node
-        if (ContractUTXOs.keySet().size() == 0) {
+        if (ContractUTXOs.keySet().size() == 0 && TransactionUTXOs.keySet().size() == 0) {
+            System.out.println("Mining active");
             return;
         }
 
         int blockDepth = BLOCKCHAIN.keySet().size();
 
-        Set<String> keySet = ContractUTXOs.keySet();
-        String[] keys = keySet.toArray(new String[keySet.size()]);
-
         List<String> merkleDataList = new ArrayList<>();
+
+
+        Set<String> contractKeySet = ContractUTXOs.keySet();
+        String[] contractKeys = contractKeySet.toArray(new String[contractKeySet.size()]);
+
         List<Contract> contracts = new ArrayList<>();
-        for (int i = 0; i < keySet.size(); i++) {
-            Contract contract = new Contract(ContractUTXOs.get(keys[i]), blockDepth, i);
+        for (int i = 0; i < contractKeySet.size(); i++) {
+            Contract contract = new Contract(ContractUTXOs.get(contractKeys[i]), blockDepth, i);
             contracts.add(contract);
             //TODO: Test to see if stream map collect gives same data in sequence
             merkleDataList.add(ToJSON(contract));
         }
+
+
+        Set<String> transactionKeySet = TransactionUTXOs.keySet();
+        String[] transactionKeys = transactionKeySet.toArray(new String[transactionKeySet.size()]);
+
+        List<Transaction> transactions = new ArrayList<>();
+        for (int i = 0; i < transactionKeySet.size(); i++) {
+            Transaction transaction = new Transaction(TransactionUTXOs.get(transactionKeys[i]), blockDepth, contracts.size() + i);
+            transactions.add(transaction);
+            //TODO: Test to see if stream map collect gives same data in sequence
+            merkleDataList.add(ToJSON(transaction));
+        }
+
+
         String merkleData = ToJSON(merkleDataList.toArray());
+        StoreMerkleDataLog(merkleData);
 
 
 //      same miner as the one who mines the block inside block constructor
         String merkleRoot = BlockSign(merkleData);
-        String genesisStringToProveMinimumDateTime = "Mark Zuckerberg answers to congress over Cambridge Analytica";
+        String genesisStringToProveMinimumDateTime = new StringBuffer("Genesis block timestamp: " +
+                "Mark Zuckerberg answers to congress over Cambridge Analytica").reverse().toString();
         String previousSign = blockDepth == 0 ? genesisStringToProveMinimumDateTime : BLOCKCHAIN.get(blockDepth - 1).sign;
 
         BlockDetails blockDetails = new BlockDetails(0, blockDepth, GetDateTimeNow(),
-                previousSign, merkleRoot, 3, "me", keys.length);
+                previousSign, merkleRoot, 3, "me", contractKeys.length + transactionKeys.length);
 
         //Mining logic here
         int difficulty = 3;
@@ -75,16 +99,21 @@ public class BlockManager {
             block = new Block(data);
         }
 
-
-        keySet.forEach(ContractUTXOs::remove);
+        // cleanup steps here
+        contractKeySet.forEach(ContractUTXOs::remove);
+        transactionKeySet.forEach(TransactionUTXOs::remove);
         BLOCKCHAIN.putIfAbsent(blockDepth, block);
-        BLOCKCHAIN_TRANSACTIONS.putIfAbsent(blockDepth, merkleData);
+        BLOCKCHAIN_CONTRACTS.putIfAbsent(blockDepth, contracts.toArray(new Contract[contracts.size()]));
+        BLOCKCHAIN_TRANSACTIONS.putIfAbsent(blockDepth, transactions.toArray(new Transaction[transactions.size()]));
         //if the above 3 lines are successful do things like sending email here if in contract
 
         CreateContracts(contracts);
+        CreateTransactions(transactions);
         StoreBlockchainBlock(block);
-        StoreTransactionsInBlock(contracts);
+        StoreContractsInBlock(contracts);
+        StoreTransactionsInBlock(transactions);
 
+        System.out.println("Block mined");
 
     }
 
@@ -98,25 +127,54 @@ public class BlockManager {
         }
     }
 
-    public static void CreateAndVerifyTransactions(String merkleData) {
-        Contract[] contracts = FromJSON(merkleData, Contract[].class);
-        Integer blockDepth = contracts[0].address.blockDepth;
-        BLOCKCHAIN_TRANSACTIONS.putIfAbsent(blockDepth, merkleData);
+    public static void CreateAndVerifyContractsAndTransactions(String jsonContracts, String jsonTransactions) {
+        List<String> merkleDataList = new ArrayList<>();
+
+        Contract[] contracts = FromJSON(jsonContracts, Contract[].class);
+        Transaction[] transactions = FromJSON(jsonTransactions, Transaction[].class);
+        if (contracts == null) {
+            contracts = new Contract[0];
+        }
+        if (transactions == null) {
+            transactions = new Transaction[0];
+        }
+
+        Integer blockDepth = contracts.length > 0 ? contracts[0].address.blockDepth : transactions[0].address.blockDepth;
+
+        BLOCKCHAIN_CONTRACTS.putIfAbsent(blockDepth, contracts);
         for (int i = 0; i < contracts.length; i++) {
             Contract contract = contracts[i];
             Contracts.putIfAbsent(contract.name, contract);
             if (contract.address.transactionDepth != i) {
+                throw new IllegalArgumentException("Contracts don't match up, blockchain in inconsistent state, re-sync from external source");
+            }
+
+            merkleDataList.add(ToJSON(contract));
+        }
+
+
+        BLOCKCHAIN_TRANSACTIONS.putIfAbsent(blockDepth, transactions);
+        for (int i = 0; i < transactions.length; i++) {
+            Transaction transaction = transactions[i];
+            Transactions.putIfAbsent(transaction.contractName, transaction);
+            if (transaction.address.transactionDepth != contracts.length + i) {
                 throw new IllegalArgumentException("Transactions don't match up, blockchain in inconsistent state, re-sync from external source");
             }
+
+            merkleDataList.add(ToJSON(transaction));
         }
 
         //Make sure blockchain is populated with CreateBlockAndVerify before running this part
         Block block = BLOCKCHAIN.get(blockDepth);
         BlockDetails blockDetails = FromJSON(block.data, BlockDetails.class);
 
-        if (Verify(merkleData, block.publicKey, blockDetails.merkleRoot)) {
+
+        String merkleData = ToJSON(merkleDataList.toArray());
+
+        if (!Verify(merkleData, block.publicKey, blockDetails.merkleRoot)) {
             throw new IllegalArgumentException("Merkle roots don't match up, blockchain in inconsistent state, re-sync from external source");
         }
+        System.out.println("Block Verified");
     }
 
 }

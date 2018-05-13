@@ -2,6 +2,7 @@ package app.utils;
 
 import app.model.Block;
 import app.model.Contract;
+import app.model.Transaction;
 import app.model.dto.Activation;
 import app.model.dto.FullUserData;
 import app.model.dto.LoginDetails;
@@ -13,7 +14,7 @@ import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import static app.service.BlockManager.CreateAndVerifyTransactions;
+import static app.service.BlockManager.CreateAndVerifyContractsAndTransactions;
 import static app.service.BlockManager.CreateBlockAndVerify;
 import static app.service.KeyzManager.CreateAndStoreKey;
 import static app.service.KeyzManager.CreateKey;
@@ -23,11 +24,13 @@ import static app.utils.JsonUtils.FromJSON;
 import static app.utils.JsonUtils.ToJSON;
 
 public class FileUtil {
+    public static final String MERKLE_FILENAME = "MERKLE.dat";
     public static final String KEYS_FILENAME = "KEYS.dat";
     public static final String USERS_FILENAME = "USERS.dat";
     public static final String REGISTERED_FILENAME = "RPU.dat";
     public static final String CODES_FILENAME = "ACTIVATION.dat";
     public static final String BLOCKS_FILENAME = "BLOCKS.dat";
+    public static final String CONTRACTS_FILENAME = "CONTRACTS.dat";
     public static final String TRANSACTIONS_FILENAME = "TRANSACTIONS.dat";
 
     public static void InitServerLoadData() {
@@ -36,8 +39,9 @@ public class FileUtil {
         ReadAllRegistrations();
         ReadAllBlocks();
         //Read all blocks must occur before read all transactions as it verifies
-        ReadAllTransactions();
+        ReadAllContractsAndTransactions();
         CreateAndStoreKey("Miner");
+        System.out.println("Init Success");
     }
 
     public static void AppendLine(String block, String fileName) {
@@ -169,15 +173,18 @@ public class FileUtil {
         }
     }
 
-    public static void ReadAllTransactions() {
+    public static void ReadAllContractsAndTransactions() {
         try {
-            Scanner scanner = new Scanner(new File(TRANSACTIONS_FILENAME));
+            Scanner scanner = new Scanner(new File(CONTRACTS_FILENAME));
+            Scanner scanner0 = new Scanner(new File(TRANSACTIONS_FILENAME));
             String line = scanner.nextLine();
-            CreateAndVerifyTransactions(line);
+            String line0 = scanner0.nextLine();
+            CreateAndVerifyContractsAndTransactions(line, line0);
 
             while (true) {
                 line = scanner.nextLine();
-                CreateAndVerifyTransactions(line);
+                line0 = scanner0.nextLine();
+                CreateAndVerifyContractsAndTransactions(line, line0);
             }
 
         } catch (NoSuchElementException | FileNotFoundException ignored) {
@@ -188,9 +195,16 @@ public class FileUtil {
         AppendLine(ToJSON(block), BLOCKS_FILENAME);
     }
 
-    public static void StoreTransactionsInBlock(List<Contract> contracts) {
-        AppendLine(ToJSON(contracts.toArray()), TRANSACTIONS_FILENAME);
+    public static void StoreContractsInBlock(List<Contract> contracts) {
+        AppendLine(ToJSON(contracts.toArray()), CONTRACTS_FILENAME);
     }
 
+    public static void StoreTransactionsInBlock(List<Transaction> transactions) {
+        AppendLine(ToJSON(transactions.toArray()), TRANSACTIONS_FILENAME);
+    }
+
+    public static void StoreMerkleDataLog(String merkleData) {
+        AppendLine(merkleData, MERKLE_FILENAME);
+    }
 
 }

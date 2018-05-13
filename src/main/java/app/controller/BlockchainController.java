@@ -18,6 +18,7 @@ import static app.service.KeyzManager.CreateAndStoreKey;
 import static app.service.KeyzManager.KEYS;
 import static app.service.MailService.SendMail;
 import static app.service.PasskitService.CreatePass;
+import static app.service.TransactionManager.CreateTransactionUTXO;
 import static app.service.UserManager.isValidSession;
 import static app.utils.JsonUtils.ToJSON;
 
@@ -28,7 +29,6 @@ public class BlockchainController {
 
     @Scheduled(fixedRate = 5000)
     public void createBlock() {
-        System.out.println("Mining active");
         MineBlock();
     }
 
@@ -50,6 +50,13 @@ public class BlockchainController {
     @PostMapping(value = "/createContract")
     public String createContract(@RequestBody CreateContract createContract) {
         CreateContractUTXO(createContract);
+        return "";
+    }
+
+
+    @PostMapping(value = "/createTransaction")
+    public String createTransaction(@RequestBody CreateContract createContract) {
+        CreateTransactionUTXO(createContract);
         return "";
     }
 

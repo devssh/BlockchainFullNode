@@ -12,6 +12,9 @@ public class JsonUtils {
     }
 
     public static <T> T FromJSON(String json, Class<T> contractClass) {
+        if(json.equals("[]")) {
+            return gson.fromJson("", contractClass);
+        }
         return gson.fromJson(json, contractClass);
     }
 }
