@@ -5,6 +5,7 @@ import app.model.dto.LoginSession;
 import app.model.view.BlockchainView;
 import app.model.view.ContractView;
 import app.model.view.KeysView;
+import app.model.view.TransactionView;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -18,7 +19,9 @@ import static app.service.KeyzManager.CreateAndStoreKey;
 import static app.service.KeyzManager.KEYS;
 import static app.service.MailService.SendMail;
 import static app.service.PasskitService.CreatePass;
+import static app.service.TransactionManager.CreateCreateTransactionUTXO;
 import static app.service.TransactionManager.CreateTransactionUTXO;
+import static app.service.TransactionManager.Transactions;
 import static app.service.UserManager.isValidSession;
 import static app.utils.JsonUtils.ToJSON;
 
@@ -56,7 +59,7 @@ public class BlockchainController {
 
     @PostMapping(value = "/createTransaction")
     public String createTransaction(@RequestBody CreateContract createContract) {
-        CreateTransactionUTXO(createContract);
+        CreateCreateTransactionUTXO(createContract);
         return "";
     }
 
@@ -64,6 +67,15 @@ public class BlockchainController {
     public String contracts(@RequestBody LoginSession loginSession) {
         if (isValidSession(loginSession)) {
             return ToJSON(new ContractView(Contracts));
+        }
+        return "";
+    }
+
+
+    @PostMapping(value = "/transactions")
+    public String transactions(@RequestBody LoginSession loginSession) {
+        if (isValidSession(loginSession)) {
+            return ToJSON(new TransactionView(Transactions));
         }
         return "";
     }

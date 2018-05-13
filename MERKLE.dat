@@ -1,2 +1,0 @@
-["{\"name\":\"hi\",\"createdAt\":\"2018-05-13T18:53:04.392655\",\"address\":{\"blockDepth\":0,\"transactionDepth\":0},\"fields\":[\"hello\"]}"]
-["{\"address\":{\"blockDepth\":1,\"transactionDepth\":0},\"contractAddress\":{\"blockDepth\":0,\"transactionDepth\":0},\"contractName\":\"hello\",\"createdAt\":\"2018-05-13T19:01:19.570257+05:30[Asia/Kolkata]\",\"values\":[\"ho\"]}"]

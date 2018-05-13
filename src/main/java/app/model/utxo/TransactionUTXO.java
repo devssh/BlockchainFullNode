@@ -20,14 +20,18 @@ public class TransactionUTXO {
     public final String[] values;
 
     public TransactionUTXO(CreateContract createTransaction) {
-            this.contractAddress = new Address(0, 0);
-            this.contractName = createTransaction.name;
-            this.createdAt = GetDateTimeNow();
+        this.contractAddress = new Address(0, 0);
+        this.contractName = createTransaction.name;
+        this.createdAt = GetDateTimeNow();
 
-            //for this transaction values are emails
-            this.values = Arrays.stream(Arrays.copyOf(createTransaction.fields, createTransaction.fields.length))
-                    .map(x -> x.replaceAll(" ", "").replaceAll(",", ""))
-                    .filter(x -> x != null && !x.equals(""))
-                    .toArray(String[]::new);
+        //for this transaction values are emails
+        this.values = Arrays.stream(Arrays.copyOf(createTransaction.fields, createTransaction.fields.length))
+                .map(x -> x.replaceAll(" ", "").replaceAll(",", ""))
+                .filter(x -> x != null && !x.equals(""))
+                .toArray(String[]::new);
+    }
+
+    public static TransactionUTXO MakeTransactionUTXO(CreateContract createContract, String type) {
+        return new TransactionUTXO(new CreateContract(type + createContract.name, createContract.fields));
     }
 }
