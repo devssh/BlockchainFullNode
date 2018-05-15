@@ -11,6 +11,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
+import static app.model.dto.FullUserData.FULL;
+import static app.model.dto.FullUserData.REDEEM;
+import static app.model.dto.FullUserData.VIEW;
 import static app.service.BlockManager.BLOCKCHAIN;
 import static app.service.BlockManager.MineBlock;
 import static app.service.ContractManager.Contracts;
@@ -19,9 +22,7 @@ import static app.service.KeyzManager.CreateAndStoreKey;
 import static app.service.KeyzManager.KEYS;
 import static app.service.MailService.SendMail;
 import static app.service.PasskitService.CreatePass;
-import static app.service.TransactionManager.CreateCreateTransactionUTXO;
-import static app.service.TransactionManager.CreateTransactionUTXO;
-import static app.service.TransactionManager.Transactions;
+import static app.service.TransactionManager.*;
 import static app.service.UserManager.isValidSession;
 import static app.utils.JsonUtils.ToJSON;
 
@@ -51,21 +52,35 @@ public class BlockchainController {
     }
 
     @PostMapping(value = "/createContract")
-    public String createContract(@RequestBody CreateContract createContract) {
-        CreateContractUTXO(createContract);
+    public String createContractController(@RequestBody CreateContract createContract) {
+        LoginSession loginSession = new LoginSession(createContract.email, createContract.sessionToken);
+        if (isValidSession(loginSession, new String[]{FULL})) {
+            CreateContractUTXO(createContract);
+        }
         return "";
     }
 
-
     @PostMapping(value = "/createTransaction")
     public String createTransaction(@RequestBody CreateContract createContract) {
-        CreateCreateTransactionUTXO(createContract);
+        LoginSession loginSession = new LoginSession(createContract.email, createContract.sessionToken);
+        if (isValidSession(loginSession, new String[]{FULL})) {
+            CreateCreateTransactionUTXO(createContract);
+        }
+        return "";
+    }
+
+    @PostMapping(value = "/completeTransaction")
+    public String completeTransaction(@RequestBody CreateContract createContract) {
+        LoginSession loginSession = new LoginSession(createContract.email, createContract.sessionToken);
+        if (isValidSession(loginSession, new String[]{FULL, REDEEM})) {
+//            CreateCompleteTransactionUTXO(createContract);
+        }
         return "";
     }
 
     @PostMapping(value = "/contracts")
     public String contracts(@RequestBody LoginSession loginSession) {
-        if (isValidSession(loginSession)) {
+        if (isValidSession(loginSession, new String[]{FULL, VIEW})) {
             return ToJSON(new ContractView(Contracts));
         }
         return "";
@@ -74,7 +89,7 @@ public class BlockchainController {
 
     @PostMapping(value = "/transactions")
     public String transactions(@RequestBody LoginSession loginSession) {
-        if (isValidSession(loginSession)) {
+        if (isValidSession(loginSession, new String[]{FULL, VIEW})) {
             return ToJSON(new TransactionView(Transactions));
         }
         return "";
@@ -83,7 +98,7 @@ public class BlockchainController {
 
     @PostMapping(value = "/blocks")
     public String blocks(@RequestBody LoginSession loginSession) {
-        if (isValidSession(loginSession)) {
+        if (isValidSession(loginSession, new String[]{FULL, VIEW})) {
             return ToJSON(new BlockchainView(BLOCKCHAIN));
         }
         return "";

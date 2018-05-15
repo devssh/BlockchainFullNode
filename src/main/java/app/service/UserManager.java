@@ -6,10 +6,12 @@ import app.model.dto.LoginDetails;
 import app.model.dto.LoginSession;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import static app.model.Keyz.GenerateSeed;
+import static app.model.dto.FullUserData.FULL;
 import static app.service.KeyzManager.CreateAndStoreKey;
 import static app.service.RegistrationManager.RegistrationCodes;
 import static app.service.RegistrationManager.RegistrationPendingUsers;
@@ -35,7 +37,7 @@ public class UserManager {
                 activation.activationCode.equals(RegistrationCodes.get(activation.email))) {
 
             FullUserData user = new FullUserData(activation.email, loginDetails.password,
-                    GenerateSeed(7), LocalDateTime.now().plusDays(1).toString());
+                    GenerateSeed(7), LocalDateTime.now().plusDays(1).toString(), FULL);
             StoreUser(user);
             //TODO: Delete from the file after creation of User without restart
             return CreateUser(ToJSON(user));
@@ -43,10 +45,11 @@ public class UserManager {
         throw new NullPointerException();
     }
 
-    public static boolean isValidSession(LoginSession loginSession) {
+    public static boolean isValidSession(LoginSession loginSession, String[] authorizationLevel) {
         FullUserData fullUserData = Users.get(loginSession.email);
         if (fullUserData != null && fullUserData.email.equals(loginSession.email) &&
-                fullUserData.sessionToken.equals(loginSession.sessionToken)) {
+                fullUserData.sessionToken.equals(loginSession.sessionToken) &&
+                Arrays.asList(authorizationLevel).contains(fullUserData.authorizationLevel)) {
             return true;
         }
         return false;

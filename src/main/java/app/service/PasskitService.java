@@ -22,7 +22,7 @@ public class PasskitService {
         String passTypeIdentifier = "pass.com.nam.discountCoupon";
         String organizationName = "ThoughtWorks Ltd";
         String description = "Discount Coupon";
-        String logoText = "News America Marketing";
+        String logoText = "NAM Blockchain Coupon";
         String appleWWDRCA = "certificates/WWDR.pem"; // this is apple's developer relation cert
         String privateKeyPath = "certificates/privateKey.p12"; // the private key you exported from keychain
         String privateKeyPassword = ""; // the password you used to export

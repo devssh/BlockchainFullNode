@@ -25,6 +25,7 @@ public class TransactionManager {
     }
     public static void CreateCompleteTransactionUTXO(CreateContract createContract) {
         TransactionUTXO transactionUTXO = MakeTransactionUTXO(createContract, "Complete-");
+        //todo: check here before putting
         TransactionUTXOs.putIfAbsent(transactionUTXO.contractName, transactionUTXO);
     }
 

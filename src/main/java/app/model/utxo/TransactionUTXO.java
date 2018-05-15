@@ -8,6 +8,7 @@ import lombok.ToString;
 
 import java.util.Arrays;
 
+import static app.model.Keyz.GenerateHash;
 import static app.utils.DateUtil.GetDateTimeNow;
 
 @AllArgsConstructor
@@ -32,6 +33,6 @@ public class TransactionUTXO {
     }
 
     public static TransactionUTXO MakeTransactionUTXO(CreateContract createContract, String type) {
-        return new TransactionUTXO(new CreateContract(type + createContract.name, createContract.fields));
+        return new TransactionUTXO(new CreateContract("tw@gmail.com", GenerateHash("tw@gmail.com", 6), type + createContract.name, createContract.fields));
     }
 }
