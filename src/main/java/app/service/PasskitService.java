@@ -17,12 +17,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PasskitService {
-    public static InputStreamSource CreatePass(String transactionId) {
+    public static InputStreamSource CreatePass(String transactionId, String heading, String text, String textDescription) {
         String teamIdentifier = "9HK4QP6364";
         String passTypeIdentifier = "pass.com.nam.discountCoupon";
         String organizationName = "ThoughtWorks Ltd";
-        String description = "NAM discount coupon";
-        String logoText = "NAM";
+        String description = "Discount Coupon";
+        String logoText = "News America Marketing";
         String appleWWDRCA = "certificates/WWDR.pem"; // this is apple's developer relation cert
         String privateKeyPath = "certificates/privateKey.p12"; // the private key you exported from keychain
         String privateKeyPassword = ""; // the password you used to export
@@ -52,9 +52,9 @@ public class PasskitService {
             PKGenericPass generic = new PKGenericPass();
             List<PKField> primaryFields = new ArrayList<PKField>();
             PKField member = new PKField();
-            member.setKey("offer"); // some unique key for primary field
-            member.setLabel("Any premium dog food");
-            member.setValue("20% oq$ff"); // some value
+            member.setKey(heading); // some unique key for primary field
+            member.setLabel(text);
+            member.setValue(textDescription + "% off"); // some value
             primaryFields.add(member);
             generic.setPrimaryFields(primaryFields);
             pass.setGeneric(generic);

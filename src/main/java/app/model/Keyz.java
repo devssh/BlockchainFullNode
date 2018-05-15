@@ -1,5 +1,6 @@
 package app.model;
 
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -11,6 +12,7 @@ public class Keyz {
     public static transient final String SHA_1_PRNG = "SHA1PRNG";
     public static transient final String SECP_256_K_1 = "secp256k1";
     public static transient final int NUM_BYTES = 512;
+    public static final String SHA_256 = "SHA-256";
     public transient PublicKey publicKeyz;
     public transient PrivateKey privateKeyz;
 
@@ -88,6 +90,18 @@ public class Keyz {
     public static String GenerateSeed(int noOfDigits) {
         String seedString = GenerateSeed();
         return seedString.substring(seedString.length() - (3 + noOfDigits), seedString.length() - 3);
+    }
+
+    public static String GenerateHash(String seedData, int noOfDigits) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance(SHA_256);
+            byte[] hash = digest.digest(seedData.getBytes(StandardCharsets.UTF_8));
+            String seedString = Base64.getEncoder().encodeToString(hash);
+            return seedString.substring(seedString.length() - (3 + noOfDigits), seedString.length() - 3);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        throw new NullPointerException();
     }
 
     public static Keyz GenerateKey(String seedString) {

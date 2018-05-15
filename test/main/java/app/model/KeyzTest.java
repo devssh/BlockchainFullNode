@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.util.Base64;
 
+import static app.model.Keyz.GenerateHash;
 import static app.model.Keyz.GenerateSeed;
 import static app.model.Keyz.GenerateKey;
 import static org.junit.Assert.assertEquals;
@@ -38,5 +39,13 @@ public class KeyzTest {
         String privateKey = "MIGNAgEAMBAGByqGSM49AgEGBSuBBAAKBHYwdAIBAQQgTMo3M8xeMrIOzbcI1xHJmX83JH3IkXgR42LOMUZfdf2gBwYFK4EEAAqhRANCAARqdBO+FO3JDk4pfAZ+VXHfJkITkBuvPYnraTdJor9PfnvSgLXQK087iwwpA0K2x58/ay4rMgYBWRdgGVCIlUO4";
         assertEquals(publicKey, GenerateKey(seedString).publicKey);
         assertEquals(privateKey, GenerateKey(seedString).privateKey);
+    }
+
+    @Test
+    public void shouldReturnSameSeed() throws Exception {
+        String seedData = "hellogmailcom";
+        String actualSeedString = GenerateHash(seedData, 6);
+        String expectedSeedString = "cqYWd3";
+        assertEquals(expectedSeedString, actualSeedString);
     }
 }

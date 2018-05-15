@@ -88,13 +88,14 @@ public class BlockchainController {
         }
         return "";
     }
-
-    @GetMapping(value="testMail")
-    public String testMail() {
-        InputStreamSource hello = CreatePass("hello");
-        SendMail("devasood@gmail.com","test", "hi", hello);
-        return "Success";
-    }
+//
+//    @GetMapping(value = "testMail")
+//    public String testMail() {
+//        InputStreamSource hello = CreatePass("hello,xyz@gmail.com,pxt", "Offer", "Pedigree Dog food", "5% off");
+//        SendMail("xyz@gmail.com", "Discount Coupon",
+//                "Scan the code below to claim a discount of " + "on " + ".", hello);
+//        return "Success";
+//    }
 
 
 }

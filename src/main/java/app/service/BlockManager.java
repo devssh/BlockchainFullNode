@@ -4,6 +4,7 @@ import app.model.Block;
 import app.model.BlockDetails;
 import app.model.Contract;
 import app.model.Transaction;
+import org.springframework.core.io.InputStreamSource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,9 +14,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import static app.model.Block.BlockSign;
+import static app.model.Keyz.GenerateHash;
+import static app.model.Keyz.GenerateSeed;
 import static app.service.ContractManager.ContractUTXOs;
 import static app.service.ContractManager.Contracts;
 import static app.service.ContractManager.CreateContracts;
+import static app.service.MailService.SendMail;
+import static app.service.PasskitService.CreatePass;
 import static app.service.TransactionManager.CreateTransactions;
 import static app.service.TransactionManager.TransactionUTXOs;
 import static app.service.TransactionManager.Transactions;
@@ -114,6 +119,24 @@ public class BlockManager {
         StoreTransactionsInBlock(transactions);
 
         System.out.println("Block mined");
+
+        for (int i = 0; i < transactions.size(); i++) {
+            Transaction transaction = transactions.get(i);
+            if (transaction.contractName.startsWith("Create")) {
+                String[] values = transaction.values;
+                if (values.length > 2) {
+                    for (int j = 2; j < values.length; j++) {
+                        InputStreamSource pkpass = CreatePass(transaction.contractName + "," + values[0] +
+                                        "," + values[1] + "," + values[j] + "," + GenerateHash(values[j], 6),
+                                "Offer", values[0], values[1]);
+                        SendMail(values[j], "Discount Coupon " + transaction.contractName.split("Create-")[1],
+                                "Scan the code below to claim a discount of " + values[1] + "% on " + values[0] + ".", pkpass);
+                        System.out.println("Mail sent to " + values[j]);
+                    }
+                }
+            }
+        }
+
 
     }
 
