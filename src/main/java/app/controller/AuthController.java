@@ -46,7 +46,7 @@ public class AuthController {
         FullUserData user = Users.get(loginDetails.email);
         if (user != null && loginDetails.email.equals(user.email) && loginDetails.password.equals(user.password)) {
             //TODO: refresh expiry if expired
-            return "{\"sessionToken\": \"" + user.sessionToken + "\"}";
+            return "{\"sessionToken\": \"" + user.sessionToken + "\", \"role\":\"" + user.authorizationLevel + "\"}";
         }
 
         LoginDetails loginDetailsExpected = RegistrationPendingUsers.get(loginDetails.email);

@@ -14,7 +14,7 @@ public class FullUserData {
     public final String validUntil;
     public final String authorizationLevel;
 
-    FullUserData(FullUserData other) {
+    public FullUserData(FullUserData other) {
         this.email = other.email;
         this.password = other.password;
         this.sessionToken = other.sessionToken;

@@ -63,7 +63,7 @@ public class BlockchainController {
     @PostMapping(value = "/createTransaction")
     public String createTransaction(@RequestBody CreateContract createContract) {
         LoginSession loginSession = new LoginSession(createContract.email, createContract.sessionToken);
-        if (isValidSession(loginSession, new String[]{FULL})) {
+        if (isValidSession(loginSession, new String[]{FULL, VIEW})) {
             CreateCreateTransactionUTXO(createContract);
         }
         return "";

@@ -17,6 +17,7 @@ import java.util.concurrent.ConcurrentMap;
 import static app.model.Keyz.GenerateHash;
 import static app.model.Keyz.GenerateSeed;
 import static app.model.dto.FullUserData.FULL;
+import static app.model.dto.FullUserData.REDEEM;
 import static app.model.dto.FullUserData.VIEW;
 import static app.service.BlockManager.CreateAndVerifyContractsAndTransactions;
 import static app.service.BlockManager.CreateBlockAndVerify;
@@ -63,7 +64,7 @@ public class FileUtil {
 
         Users.putIfAbsent("kroger@gmail.com", new FullUserData("kroger@gmail.com",
                 "921a446c39ee2339c41e7e1a76240f4bc48766881a94a33271fc43152a2fb34203d892ed6a357ccda4cff4be9f86280c49018bdd2a4b3fe517141e4b9b2e2b02",
-                GenerateSeed(6), DateUtil.GetDateTimeTomorrow(), VIEW));
+                GenerateSeed(6), DateUtil.GetDateTimeTomorrow(), REDEEM));
 
 
         Users.putIfAbsent("walmart@gmail.com", new FullUserData("walmart@gmail.com",
