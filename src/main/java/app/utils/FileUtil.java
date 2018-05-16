@@ -40,56 +40,56 @@ public class FileUtil {
     public static final String TRANSACTIONS_FILENAME = "TRANSACTIONS.dat";
 
     public static void InitServerLoadData() {
-        ReadAllKeys();
-        ReadAllUsers();
-        ReadAllRegistrations();
-        ReadAllBlocks();
-        //Read all blocks must occur before read all transactions as it verifies
-        ReadAllContractsAndTransactions();
-        CreateAndStoreKey("Miner");
-
-        Users.putIfAbsent("tw@gmail.com", new FullUserData("tw@gmail.com",
-                "b585d58817fe1d6ee882bd20ef3580b5bdfcb5cba4e315a11e89d6652159ad9c18ee0bbd9ce0684bf2b99254ceec82e4b4dfb7ea5ea2ffcbee8dbd4a5c7a68a7",
-                GenerateHash("tw@gmail.com",6), DateUtil.GetDateTimeTomorrow(), FULL));
-
-
-        Users.putIfAbsent("forfive@gmail.com", new FullUserData("forfive@gmail.com",
-                "cec41ebc893f5b6bc8a0b59460ead94656974f93babafd71cce5ed58624b5f4a0e69edc3400d6d3d335a305817d70d5c1732b1fc82d374ee84e8c63aa6856938",
-                GenerateSeed(6), DateUtil.GetDateTimeTomorrow(), VIEW));
-
-        Users.putIfAbsent("simonsips@gmail.com", new FullUserData("simonsips@gmail.com",
-                "74f34c5ff2c288d5aaac3d99b2c497df2c434f1e6a9498befd95529815f43c32bd65c271045c00935cd5b97499c49c0b921397ef7c0d58f25f5bbe141aba22c6",
-                GenerateSeed(6), DateUtil.GetDateTimeTomorrow(), VIEW));
-
-
-        Users.putIfAbsent("kroger@gmail.com", new FullUserData("kroger@gmail.com",
-                "921a446c39ee2339c41e7e1a76240f4bc48766881a94a33271fc43152a2fb34203d892ed6a357ccda4cff4be9f86280c49018bdd2a4b3fe517141e4b9b2e2b02",
-                GenerateSeed(6), DateUtil.GetDateTimeTomorrow(), REDEEM));
-
-
-        Users.putIfAbsent("walmart@gmail.com", new FullUserData("walmart@gmail.com",
-                "ac415603b07b59c20f14c04bdf7bc839fccdf424c565a11a5dac6fadc19010d15f79b586d08757a52d4770964b2275779db18ba6f3625ec61ea4fe3c0f571d40",
-                GenerateSeed(6), DateUtil.GetDateTimeTomorrow(), VIEW));
-
-
-        Users.putIfAbsent("target@gmail.com", new FullUserData("target@gmail.com",
-                "c9d23dec55be9e9f7722a78131fb30e9a7b90ef0f22c9274a7c480231014921b6ad7312f3dbc1504d4227ee796e98462f0c999536bb558148a7de76ca32375e1",
-                GenerateSeed(6), DateUtil.GetDateTimeTomorrow(), VIEW));
-
-
-        Users.putIfAbsent("walgreens@gmail.com", new FullUserData("walgreens@gmail.com",
-                "edb5f9116e5cfdf58ab783fe9f47686d333fd8ca6549fd22f49564d7efa44293953ce044523d97fad570b6f9f65627cff859a5a64e38528daab0c3ac24f2f8f7",
-                GenerateSeed(6), DateUtil.GetDateTimeTomorrow(), VIEW));
-
-
-        Users.putIfAbsent("albertsons@gmail.com", new FullUserData("albertsons@gmail.com",
-                "1a9fe37fedbcba0637ee2ca868f34221ff33d3da0dfdddd59a6490c2074e2a3880ecac592f0df3c165c706fa4da658f71963c659caccb58fba19648d28cb813e",
-                GenerateSeed(6), DateUtil.GetDateTimeTomorrow(), VIEW));
-
-
-        Users.putIfAbsent("cvs@gmail.com", new FullUserData("cvs@gmail.com",
-                "9809037b3ec42d44ca4fa81ab033a97afbf3850e7824e246e715276658fef352060cc3a993e611d2f815831589a3e194d42bc43517d2c8be09a4dd4f57b2040a",
-                GenerateSeed(6), DateUtil.GetDateTimeTomorrow(), VIEW));
+//        ReadAllKeys();
+//        ReadAllUsers();
+//        ReadAllRegistrations();
+//        ReadAllBlocks();
+//        //Read all blocks must occur before read all transactions as it verifies
+//        ReadAllContractsAndTransactions();
+//        CreateAndStoreKey("Miner");
+//
+//        Users.putIfAbsent("tw@gmail.com", new FullUserData("tw@gmail.com",
+//                "b585d58817fe1d6ee882bd20ef3580b5bdfcb5cba4e315a11e89d6652159ad9c18ee0bbd9ce0684bf2b99254ceec82e4b4dfb7ea5ea2ffcbee8dbd4a5c7a68a7",
+//                GenerateHash("tw@gmail.com",6), DateUtil.GetDateTimeTomorrow(), FULL));
+//
+//
+//        Users.putIfAbsent("forfive@gmail.com", new FullUserData("forfive@gmail.com",
+//                "cec41ebc893f5b6bc8a0b59460ead94656974f93babafd71cce5ed58624b5f4a0e69edc3400d6d3d335a305817d70d5c1732b1fc82d374ee84e8c63aa6856938",
+//                GenerateSeed(6), DateUtil.GetDateTimeTomorrow(), VIEW));
+//
+//        Users.putIfAbsent("simonsips@gmail.com", new FullUserData("simonsips@gmail.com",
+//                "74f34c5ff2c288d5aaac3d99b2c497df2c434f1e6a9498befd95529815f43c32bd65c271045c00935cd5b97499c49c0b921397ef7c0d58f25f5bbe141aba22c6",
+//                GenerateSeed(6), DateUtil.GetDateTimeTomorrow(), VIEW));
+//
+//
+//        Users.putIfAbsent("kroger@gmail.com", new FullUserData("kroger@gmail.com",
+//                "921a446c39ee2339c41e7e1a76240f4bc48766881a94a33271fc43152a2fb34203d892ed6a357ccda4cff4be9f86280c49018bdd2a4b3fe517141e4b9b2e2b02",
+//                GenerateSeed(6), DateUtil.GetDateTimeTomorrow(), REDEEM));
+//
+//
+//        Users.putIfAbsent("walmart@gmail.com", new FullUserData("walmart@gmail.com",
+//                "ac415603b07b59c20f14c04bdf7bc839fccdf424c565a11a5dac6fadc19010d15f79b586d08757a52d4770964b2275779db18ba6f3625ec61ea4fe3c0f571d40",
+//                GenerateSeed(6), DateUtil.GetDateTimeTomorrow(), VIEW));
+//
+//
+//        Users.putIfAbsent("target@gmail.com", new FullUserData("target@gmail.com",
+//                "c9d23dec55be9e9f7722a78131fb30e9a7b90ef0f22c9274a7c480231014921b6ad7312f3dbc1504d4227ee796e98462f0c999536bb558148a7de76ca32375e1",
+//                GenerateSeed(6), DateUtil.GetDateTimeTomorrow(), VIEW));
+//
+//
+//        Users.putIfAbsent("walgreens@gmail.com", new FullUserData("walgreens@gmail.com",
+//                "edb5f9116e5cfdf58ab783fe9f47686d333fd8ca6549fd22f49564d7efa44293953ce044523d97fad570b6f9f65627cff859a5a64e38528daab0c3ac24f2f8f7",
+//                GenerateSeed(6), DateUtil.GetDateTimeTomorrow(), VIEW));
+//
+//
+//        Users.putIfAbsent("albertsons@gmail.com", new FullUserData("albertsons@gmail.com",
+//                "1a9fe37fedbcba0637ee2ca868f34221ff33d3da0dfdddd59a6490c2074e2a3880ecac592f0df3c165c706fa4da658f71963c659caccb58fba19648d28cb813e",
+//                GenerateSeed(6), DateUtil.GetDateTimeTomorrow(), VIEW));
+//
+//
+//        Users.putIfAbsent("cvs@gmail.com", new FullUserData("cvs@gmail.com",
+//                "9809037b3ec42d44ca4fa81ab033a97afbf3850e7824e246e715276658fef352060cc3a993e611d2f815831589a3e194d42bc43517d2c8be09a4dd4f57b2040a",
+//                GenerateSeed(6), DateUtil.GetDateTimeTomorrow(), VIEW));
 
         System.out.println("Init Success");
     }
