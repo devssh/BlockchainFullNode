@@ -78,7 +78,7 @@ public class Keyz {
 
     public static String GenerateSeed() {
         try {
-            SecureRandom random = new SecureRandom();
+            SecureRandom random = SecureRandom.getInstance(SHA_1_PRNG);
             byte[] seed = random.generateSeed(NUM_BYTES);
             return Base64.getEncoder().encodeToString(seed);
         } catch (Exception e) {
@@ -132,7 +132,10 @@ public class Keyz {
     }
 
     public static Keyz GenerateKeyWithName(String name) {
-        return GenerateKey(GenerateSeed(), name);
+        System.out.println("Trying to generate random seed");
+        String seedString = GenerateSeed();
+        System.out.println("success");
+        return GenerateKey(seedString, name);
     }
 
     @Override

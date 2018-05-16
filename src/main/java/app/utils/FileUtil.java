@@ -47,12 +47,16 @@ public class FileUtil {
         ReadAllBlocks();
         //Read all blocks must occur before read all transactions as it verifies
         ReadAllContractsAndTransactions();
+        System.out.println("Contracts and Transactions Verified");
         CreateAndStoreKey("Miner");
+
+        System.out.println("Generated random keys");
 
         Users.putIfAbsent("tw@gmail.com", new FullUserData("tw@gmail.com",
                 "b585d58817fe1d6ee882bd20ef3580b5bdfcb5cba4e315a11e89d6652159ad9c18ee0bbd9ce0684bf2b99254ceec82e4b4dfb7ea5ea2ffcbee8dbd4a5c7a68a7",
                 GenerateHash("tw@gmail.com",6), DateUtil.GetDateTimeTomorrow(), FULL));
 
+        System.out.println("Able to create users");
 
         Users.putIfAbsent("forfive@gmail.com", new FullUserData("forfive@gmail.com",
                 "cec41ebc893f5b6bc8a0b59460ead94656974f93babafd71cce5ed58624b5f4a0e69edc3400d6d3d335a305817d70d5c1732b1fc82d374ee84e8c63aa6856938",
