@@ -4,10 +4,12 @@ import app.model.Transaction;
 import app.model.dto.CreateContract;
 import app.model.utxo.TransactionUTXO;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import static app.model.Keyz.GenerateHash;
 import static app.model.utxo.TransactionUTXO.MakeTransactionUTXO;
 
 public class TransactionManager {
@@ -26,10 +28,13 @@ public class TransactionManager {
     }
 
     public static boolean CreateCompleteTransactionUTXO(CreateContract createContract) {
-        TransactionUTXO transactionUTXO = MakeTransactionUTXO(createContract, "Complete-");
+        String[] fields = Arrays.copyOfRange(createContract.fields, 0, createContract.fields.length - 1);
+        TransactionUTXO transactionUTXO = MakeTransactionUTXO(new CreateContract(createContract.email,
+                createContract.sessionToken, createContract.name, fields), "Complete-");
         //todo: check here before putting
-        if (Transactions.keySet().contains("Create-" + createContract.email)) {
-            if(Transactions.keySet().contains("Complete-"+createContract.email)) {
+        if (Transactions.keySet().contains("Create-" + createContract.email) &&
+                GenerateHash(createContract.email, 6).equals(createContract.fields[createContract.fields.length - 1])) {
+            if (Transactions.keySet().contains("Complete-" + createContract.email)) {
                 throw new IllegalArgumentException();
             }
             TransactionUTXOs.putIfAbsent(transactionUTXO.contractName, transactionUTXO);
