@@ -126,7 +126,7 @@ public class BlockManager {
                 String[] values = transaction.values;
                 if (values.length > 2) {
                     for (int j = 2; j < values.length; j++) {
-                        InputStreamSource pkpass = CreatePass(transaction.contractName + "," + values[0] +
+                        InputStreamSource pkpass = CreatePass(transaction.contractName.split("Create-")[1] + "," + values[0] +
                                         "," + values[1] + "," + values[j] + "," + GenerateHash(values[j], 6),
                                 "Offer", values[0], values[1]);
                         SendMail(values[j], "Discount Coupon " + transaction.contractName.split("Create-")[1],

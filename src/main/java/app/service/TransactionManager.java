@@ -31,12 +31,12 @@ public class TransactionManager {
         String[] fields = Arrays.copyOfRange(createContract.fields, 0, createContract.fields.length - 1);
         TransactionUTXO transactionUTXO = MakeTransactionUTXO(new CreateContract(createContract.email,
                 createContract.sessionToken, createContract.name, fields), "Complete-");
-        //todo: check here before putting
-        if (Transactions.keySet().contains("Create-" + createContract.email) &&
+        if (Transactions.keySet().contains("Create-"+createContract.name) &&
                 GenerateHash(createContract.email, 6).equals(createContract.fields[createContract.fields.length - 1])) {
-            if (Transactions.keySet().contains("Complete-" + createContract.email)) {
+            if (Transactions.keySet().contains("Complete-" + createContract.name)) {
                 throw new IllegalArgumentException();
             }
+
             TransactionUTXOs.putIfAbsent(transactionUTXO.contractName, transactionUTXO);
             return true;
         }
