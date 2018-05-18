@@ -19,14 +19,23 @@ public class TransactionManager {
         TransactionUTXO transactionUTXO = MakeTransactionUTXO(createContract, "Create-");
         TransactionUTXOs.putIfAbsent(transactionUTXO.contractName, transactionUTXO);
     }
+
     public static void CreateCreateTransactionUTXO(CreateContract createContract) {
         TransactionUTXO transactionUTXO = MakeTransactionUTXO(createContract, "Create-");
         TransactionUTXOs.putIfAbsent(transactionUTXO.contractName, transactionUTXO);
     }
-    public static void CreateCompleteTransactionUTXO(CreateContract createContract) {
+
+    public static boolean CreateCompleteTransactionUTXO(CreateContract createContract) {
         TransactionUTXO transactionUTXO = MakeTransactionUTXO(createContract, "Complete-");
         //todo: check here before putting
-        TransactionUTXOs.putIfAbsent(transactionUTXO.contractName, transactionUTXO);
+        if (Transactions.keySet().contains("Create-" + createContract.email)) {
+            if(Transactions.keySet().contains("Complete-"+createContract.email)) {
+                throw new IllegalArgumentException();
+            }
+            TransactionUTXOs.putIfAbsent(transactionUTXO.contractName, transactionUTXO);
+            return true;
+        }
+        return false;
     }
 
     public static void CreateTransactions(List<Transaction> transactions) {

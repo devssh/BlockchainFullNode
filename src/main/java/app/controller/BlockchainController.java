@@ -73,14 +73,18 @@ public class BlockchainController {
     public String completeTransaction(@RequestBody CreateContract createContract) {
         LoginSession loginSession = new LoginSession(createContract.email, createContract.sessionToken);
         if (isValidSession(loginSession, new String[]{FULL, REDEEM})) {
-//            CreateCompleteTransactionUTXO(createContract);
+            try {
+                return "{\"complete\":" + CreateCompleteTransactionUTXO(createContract) + "}";
+            } catch (IllegalArgumentException e) {
+                return "{\"complete\":\"doubleSpendDetected\"}";
+            }
         }
-        return "";
+        return "{\"complete\":false}";
     }
 
     @PostMapping(value = "/contracts")
     public String contracts(@RequestBody LoginSession loginSession) {
-        if (isValidSession(loginSession, new String[]{FULL, VIEW})) {
+        if (isValidSession(loginSession, new String[]{FULL, VIEW, REDEEM})) {
             return ToJSON(new ContractView(Contracts));
         }
         return "";
@@ -89,7 +93,7 @@ public class BlockchainController {
 
     @PostMapping(value = "/transactions")
     public String transactions(@RequestBody LoginSession loginSession) {
-        if (isValidSession(loginSession, new String[]{FULL, VIEW})) {
+        if (isValidSession(loginSession, new String[]{FULL, VIEW, REDEEM})) {
             return ToJSON(new TransactionView(Transactions));
         }
         return "";
@@ -98,7 +102,7 @@ public class BlockchainController {
 
     @PostMapping(value = "/blocks")
     public String blocks(@RequestBody LoginSession loginSession) {
-        if (isValidSession(loginSession, new String[]{FULL, VIEW})) {
+        if (isValidSession(loginSession, new String[]{FULL, VIEW, REDEEM})) {
             return ToJSON(new BlockchainView(BLOCKCHAIN));
         }
         return "";
