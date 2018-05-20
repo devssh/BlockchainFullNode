@@ -31,8 +31,8 @@ public class TransactionManager {
         String[] fields = Arrays.copyOfRange(createContract.fields, 0, createContract.fields.length - 1);
         TransactionUTXO transactionUTXO = MakeTransactionUTXO(new CreateContract(createContract.email,
                 createContract.sessionToken, createContract.name, fields), "Complete-");
-        if (Transactions.keySet().contains("Create-"+createContract.name) &&
-                GenerateHash(createContract.email, 6).equals(createContract.fields[createContract.fields.length - 1])) {
+        if (Transactions.keySet().contains("Create-" + createContract.name) &&
+                GenerateHash(createContract.fields[2], 6).equals(createContract.fields[createContract.fields.length - 1])) {
             if (Transactions.keySet().contains("Complete-" + createContract.name)) {
                 throw new IllegalArgumentException();
             }

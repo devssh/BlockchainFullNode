@@ -79,6 +79,8 @@ public class BlockchainController {
                 return "{\"complete\":\"doubleSpendDetected\"}";
             }
         }
+        System.out.println("whyyy" + createContract.toString());
+        System.out.println("whyyy" + createContract.toString());
         return "{\"complete\":false}";
     }
 
