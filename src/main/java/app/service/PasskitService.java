@@ -42,7 +42,7 @@ public class PasskitService {
             pass.setBackgroundColor("rgb(117, 198, 226)");
 
             PKBarcode barcode = new PKBarcode();
-            barcode.setFormat(PKBarcodeFormat.PKBarcodeFormatPDF417);
+            barcode.setFormat(PKBarcodeFormat.PKBarcodeFormatQR);
             barcode.setMessageEncoding(Charset.forName("utf-8"));
             barcode.setMessage(transactionId);
             List<PKBarcode> barcodes = new ArrayList<PKBarcode>();
