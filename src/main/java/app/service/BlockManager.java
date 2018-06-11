@@ -123,15 +123,25 @@ public class BlockManager {
                 Coupon coupon = transaction.coupon;
 
                 for (String email :transaction.coupon.mails) {
+                    String discount_with_type = getDiscountWithType(transaction);
                     InputStreamSource pkpass = CreatePass(transaction.contractName.split("Create-")[1] + "," + transaction.coupon.product +
-                            "," + transaction.coupon.discount + "," + email + "," + GenerateHash(email, 6),
-                        "Offer", transaction.coupon.product, transaction.coupon.discount + transaction.coupon.type );
+                            "," + transaction.coupon.discount + "," +  transaction.coupon.type + "," + email + "," + GenerateHash(email, 6),
+                        "Offer", transaction.coupon.product, discount_with_type);
                     SendMail(email, "Discount Coupon " + transaction.contractName.split("Create-")[1],
-                        "Scan the code below to claim a discount of " + transaction.coupon.discount + transaction.coupon.type +" on " + transaction.coupon.product + ".", pkpass);
+                        "Scan the code below to claim a discount of " + discount_with_type+" on " + transaction.coupon.product + ".", pkpass);
                     System.out.println("Mail sent to " + email);
                 }
             }
         }
+    }
+
+    private static String getDiscountWithType(Transaction transaction) {
+        if ("$".equals(transaction.coupon.type)) {
+           return transaction.coupon.type + transaction.coupon.discount;
+        } else if ("%".equals(transaction.coupon.type)) {
+            return transaction.coupon.discount + transaction.coupon.type;
+        }
+        return transaction.coupon.discount;
     }
 
     public static void CreateBlockAndVerify(String jsonBlock) {
