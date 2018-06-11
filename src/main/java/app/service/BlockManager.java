@@ -125,9 +125,9 @@ public class BlockManager {
                 for (String email :transaction.coupon.mails) {
                     InputStreamSource pkpass = CreatePass(transaction.contractName.split("Create-")[1] + "," + transaction.coupon.product +
                             "," + transaction.coupon.discount + "," + email + "," + GenerateHash(email, 6),
-                        "Offer", transaction.coupon.product, transaction.coupon.discount);
+                        "Offer", transaction.coupon.product, transaction.coupon.discount + transaction.coupon.type );
                     SendMail(email, "Discount Coupon " + transaction.contractName.split("Create-")[1],
-                        "Scan the code below to claim a discount of " + transaction.coupon.discount + "% on " + transaction.coupon.product + ".", pkpass);
+                        "Scan the code below to claim a discount of " + transaction.coupon.discount + transaction.coupon.type +" on " + transaction.coupon.product + ".", pkpass);
                     System.out.println("Mail sent to " + email);
                 }
             }
