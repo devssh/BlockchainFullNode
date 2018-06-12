@@ -41,7 +41,7 @@ public class TransactionUTXO {
     }
 
     public static TransactionUTXO MakeTransactionUTXO(CreateContract createContract, String type) {
-        if (type.equals("Complete-")) {
+        if (type.equals("Complete")) {
             return new TransactionUTXO(new CreateContract("tw@gmail.com", GenerateHash("tw@gmail.com", 6), type + createContract.name + createContract.fields[2], createContract.fields));
         }
         return new TransactionUTXO(new CreateContract("tw@gmail.com", GenerateHash("tw@gmail.com", 6), type + createContract.name, createContract.fields));
