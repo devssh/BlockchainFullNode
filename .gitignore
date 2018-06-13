@@ -4,4 +4,6 @@
 .gradle/3.1/**
 .DS_Store
 out/**
+build/
 password.dat
+*.iml

@@ -230,19 +230,20 @@ public class FileUtil {
 
     public static void ReadAllContractsAndTransactions() {
         try {
-            Scanner scanner = new Scanner(new File(CONTRACTS_FILENAME));
-            Scanner scanner0 = new Scanner(new File(TRANSACTIONS_FILENAME));
-            String line = scanner.nextLine();
-            String line0 = scanner0.nextLine();
+            Scanner contract_scanner = new Scanner(new File(CONTRACTS_FILENAME));
+            Scanner transaction_scanner = new Scanner(new File(TRANSACTIONS_FILENAME));
+            String line = contract_scanner.nextLine();
+            String line0 = transaction_scanner.nextLine();
             CreateAndVerifyContractsAndTransactions(line, line0);
 
             while (true) {
-                line = scanner.nextLine();
-                line0 = scanner0.nextLine();
+                line = contract_scanner.nextLine();
+                line0 = transaction_scanner.nextLine();
                 CreateAndVerifyContractsAndTransactions(line, line0);
             }
 
         } catch (NoSuchElementException | FileNotFoundException ignored) {
+
         }
     }
 

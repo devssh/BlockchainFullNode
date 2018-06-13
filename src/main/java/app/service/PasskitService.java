@@ -54,7 +54,7 @@ public class PasskitService {
             PKField member = new PKField();
             member.setKey(heading); // some unique key for primary field
             member.setLabel(text);
-            member.setValue(textDescription + "% off"); // some value
+            member.setValue(textDescription + " off"); // some value
             primaryFields.add(member);
             generic.setPrimaryFields(primaryFields);
             pass.setGeneric(generic);

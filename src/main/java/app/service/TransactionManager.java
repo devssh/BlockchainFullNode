@@ -33,7 +33,7 @@ public class TransactionManager {
                 createContract.sessionToken, createContract.name, fields), "Complete-");
         if (Transactions.keySet().contains("Create-" + createContract.name) &&
                 GenerateHash(createContract.fields[2], 6).equals(createContract.fields[createContract.fields.length - 1])) {
-            if (Transactions.keySet().contains("Complete-" + createContract.name)) {
+            if (Transactions.keySet().contains("Complete-" + createContract.name + createContract.fields[2])) {
                 throw new IllegalArgumentException();
             }
 

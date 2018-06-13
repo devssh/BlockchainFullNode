@@ -1,9 +1,6 @@
 package app.service;
 
-import app.model.Block;
-import app.model.BlockDetails;
-import app.model.Contract;
-import app.model.Transaction;
+import app.model.*;
 import org.springframework.core.io.InputStreamSource;
 
 import java.util.ArrayList;
@@ -123,21 +120,28 @@ public class BlockManager {
         for (int i = 0; i < transactions.size(); i++) {
             Transaction transaction = transactions.get(i);
             if (transaction.contractName.startsWith("Create")) {
-                String[] values = transaction.values;
-                if (values.length > 2) {
-                    for (int j = 2; j < values.length; j++) {
-                        InputStreamSource pkpass = CreatePass(transaction.contractName.split("Create-")[1] + "," + values[0] +
-                                        "," + values[1] + "," + values[j] + "," + GenerateHash(values[j], 6),
-                                "Offer", values[0], values[1]);
-                        SendMail(values[j], "Discount Coupon " + transaction.contractName.split("Create-")[1],
-                                "Scan the code below to claim a discount of " + values[1] + "% on " + values[0] + ".", pkpass);
-                        System.out.println("Mail sent to " + values[j]);
-                    }
+                Coupon coupon = transaction.coupon;
+
+                for (String email :transaction.coupon.mails) {
+                    String discount_with_type = getDiscountWithType(transaction);
+                    InputStreamSource pkpass = CreatePass(transaction.contractName.split("Create-")[1] + "," + transaction.coupon.product +
+                            "," + transaction.coupon.discount + "," +  transaction.coupon.type + "," + email + "," + GenerateHash(email, 6),
+                        "Offer", transaction.coupon.product, discount_with_type);
+                    SendMail(email, "Discount Coupon " + transaction.contractName.split("Create-")[1],
+                        "Scan the code below to claim a discount of " + discount_with_type+" on " + transaction.coupon.product + ".", pkpass);
+                    System.out.println("Mail sent to " + email);
                 }
             }
         }
+    }
 
-
+    private static String getDiscountWithType(Transaction transaction) {
+        if ("$".equals(transaction.coupon.type)) {
+           return transaction.coupon.type + transaction.coupon.discount;
+        } else if ("%".equals(transaction.coupon.type)) {
+            return transaction.coupon.discount + transaction.coupon.type;
+        }
+        return transaction.coupon.discount;
     }
 
     public static void CreateBlockAndVerify(String jsonBlock) {
@@ -158,6 +162,7 @@ public class BlockManager {
         if (contracts == null) {
             contracts = new Contract[0];
         }
+
         if (transactions == null) {
             transactions = new Transaction[0];
         }
